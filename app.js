@@ -1,5 +1,5 @@
 // Конфигурация
-const API_URL = "https://script.google.com/macros/s/AKfycbxYCUO9iAmyAl6ZfLLuziAYs5AXphDqcSqQVj2ma-u_j2tosjhcOyMW3JGSsC7ipJG2pw/exec";
+const API_URL = "https://https://script.google.com/macros/s/AKfycbxGQWfMxgbQ55_djw3Fr0JhkROqnGb9hObE4vkiUkNkAgM5l9XiRgAZf7FkN5YutB-D3Q/exec";
 let currentTab = 0;
 
 // Инициализация Telegram WebApp
@@ -68,3 +68,20 @@ window.changeTab = (index) => {
 
 // Запуск
 document.addEventListener("DOMContentLoaded", initTabs);
+
+// Проверяем, что мы в Telegram
+if (window.Telegram?.WebApp) {
+  const tg = window.Telegram.WebApp;
+  
+  // Настройки интерфейса
+  tg.expand();  // Растягиваем на весь экран
+  tg.setHeaderColor('#2b2d42');  // Фиолетовая шапка
+  
+  // Получаем данные пользователя
+  const user = tg.initDataUnsafe.user;
+  console.log('Привет, ', user?.first_name);
+  
+  // Кнопка "Закрыть"
+  tg.BackButton.show();
+  tg.BackButton.onClick(() => tg.close());
+}
