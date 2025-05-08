@@ -4,6 +4,7 @@ let currentTab = 0;
 
 // Инициализация Telegram WebApp
 if (window.Telegram?.WebApp) {
+  const tg = window.Telegram.WebApp;
   tg.expand();
   tg.setHeaderColor("#2b2d42");
 }
@@ -13,8 +14,10 @@ async function loadData(sheetName) {
   try {
     const response = await axios.post(API_URL, { 
       action: "getData", 
-      sheetName 
-    });
+      sheetName: sheetName 
+    }, {
+      headers: { "Content-Type": "application/json" }
+});
     renderTable(response.data.data || []);
   } catch (error) {
     console.error("Ошибка:", error);
@@ -54,12 +57,12 @@ function initTabs() {
   let tabHtml = '';
   
   tabs.forEach((tab, index) => {
-    tabHtml += 
+    tabHtml += '
       <li class="nav-item">
         <button class="nav-link ${index === 0 ? 'active' : ''}" 
                 onclick="changeTab(${index})">${tab}</button>
       </li>
-    ;
+    ';
   });
   
   document.getElementById("myTab").innerHTML = tabHtml;
