@@ -5,7 +5,7 @@ let currentTab = 0;
 // Инициализация Telegram WebApp
 if (window.Telegram?.WebApp) {
   Telegram.WebApp.expand();
-  Telegram.WebApp.enableClosingConfirmation();
+  Telegram.WebApp.setHeaderColor("#2b2d42");
 }
 
 // Загрузка данных
