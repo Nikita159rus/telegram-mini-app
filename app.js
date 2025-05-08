@@ -1,11 +1,11 @@
 // Конфигурация
-const API_URL = "https://https://https://script.google.com/macros/s/AKfycbxPRI_14pWnoK0JmZ-cet-FjpZ0lboNxDvrAy4vZKC5JayezJ9OrTJM-Or0sOUOPj2tlQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxPRI_14pWnoK0JmZ-cet-FjpZ0lboNxDvrAy4vZKC5JayezJ9OrTJM-Or0sOUOPj2tlQ/exec";
 let currentTab = 0;
 
 // Инициализация Telegram WebApp
 if (window.Telegram?.WebApp) {
-  Telegram.WebApp.expand();
-  Telegram.WebApp.setHeaderColor("#2b2d42");
+  tg.expand();
+  tg.setHeaderColor("#2b2d42");
 }
 
 // Загрузка данных
@@ -18,12 +18,17 @@ async function loadData(sheetName) {
     renderTable(response.data.data || []);
   } catch (error) {
     console.error("Ошибка:", error);
+    document.getElementById("myTabContent").innerHTML = 
+      <div class="alert alert-danger">
+        Ошибка загрузки данных: ${error.message}
+      </div>
+    ;
   }
 }
 
 // Рендер таблицы
 function renderTable(data) {
-  let html = <table class="table"><thead><tr>;
+  let html = '<table class="table"><thead><tr>';
   
   // Заголовки (адаптивные)
   const headers = currentTab === 0 
@@ -49,10 +54,12 @@ function initTabs() {
   let tabHtml = '';
   
   tabs.forEach((tab, index) => {
-    tabHtml += <li class="nav-item">
-      <button class="nav-link ${index === 0 ? 'active' : ''}" 
-              onclick="changeTab(${index})">${tab}</button>
-    </li>;
+    tabHtml += 
+      <li class="nav-item">
+        <button class="nav-link ${index === 0 ? 'active' : ''}" 
+                onclick="changeTab(${index})">${tab}</button>
+      </li>
+    ;
   });
   
   document.getElementById("myTab").innerHTML = tabHtml;
