@@ -1,0 +1,96 @@
+/* Основные стили */
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+.container {
+  max-width: 100%;
+  padding: 15px;
+}
+
+/* Заголовок */
+h1 {
+  color: #333;
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+/* Вкладки */
+.tabs {
+  display: flex;
+  margin-bottom: 15px;
+  gap: 5px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px;
+  background: #ddd;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.tab-btn.active {
+  background: #4CAF50;
+  color: white;
+}
+
+/* Список материалов */
+.materials-list {
+  background: white;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 15px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.material-item {
+  padding: 12px 10px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.material-info {
+  flex: 1;
+}
+
+.material-name {
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+
+.material-quantity {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Кнопки действий */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  flex: 1;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.action-btn:active {
+  transform: scale(0.98);
+}
