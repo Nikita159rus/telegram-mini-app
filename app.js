@@ -1,5 +1,5 @@
 // Конфигурация
-const API_URL = "https://https://https://script.google.com/macros/s/AKfycbxixgwkp4Unq_AVlgUaGZKEtXxUHiduj6rMUx-dJR0cYZ8Vy82PbNTTOU60f3GB8bruyA/exec";
+const API_URL = "https://https://https://script.google.com/macros/s/AKfycbxPRI_14pWnoK0JmZ-cet-FjpZ0lboNxDvrAy4vZKC5JayezJ9OrTJM-Or0sOUOPj2tlQ/exec";
 let currentTab = 0;
 
 // Инициализация Telegram WebApp
