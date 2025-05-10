@@ -13,7 +13,7 @@ if (window.Telegram?.WebApp) {
 async function loadData(sheetName) {
   try {
     const response = await axios.post(API_URL, { 
-      action: "getData", 
+      action: "getMaterials", 
       sheetName: sheetName 
     }, {
       headers: { "Content-Type": "application/json" }
