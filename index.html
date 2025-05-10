@@ -126,14 +126,14 @@
     </div>
 
     <script>
-        const tg = window.
-Telegram.WebApp;
-        tg.expand();
+        const tg = window.Telegram.WebApp;
+tg.expand();
         tg.MainButton.setText("Готово").show().onClick(() => tg.close());
         
         let currentSheet = '';
         let currentMaterialId = null;
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyX0IRNfrYBOlkzKLllAOHiyu3d_w7Vc94-u-OGyVsSi6L9tDUvtVCG-JxiDffCrdaVsw/exec'; // Замените на URL вашего скрипта
+        // Замените на URL вашего развернутого Apps Script веб-приложения
+        const SCRIPT_URL = 'https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbyX0IRNfrYBOlkzKLllAOHiyu3d_w7Vc94-u-OGyVsSi6L9tDUvtVCG-JxiDffCrdaVsw/exec';
         
         // Функция для отправки запросов к Apps Script
         async function callServer(action, data = {}) {
@@ -144,10 +144,12 @@ Telegram.WebApp;
                     body: JSON.stringify({ action, ...data })
                 });
                 
-                return await response.json();
+                const result = await response.json();
+                if (result.error) throw new Error(result.error);
+                return result;
             } catch (error) {
                 console.error('Ошибка запроса:', error);
-                showError('materials', 'Ошибка соединения с сервером');
+                showError('materials', 'Ошибка соединения: ' + error.message);
                 return { error: error.message };
             }
         }
@@ -212,14 +214,26 @@ Telegram.WebApp;
                     <td>${material.name}</td>
                     <td>${material.quantity} ${material.unit || ''}</td>
                     <td>
-                        <button class="action-btn edit-btn" onclick="editMaterial(${material.id}, '${material.name.replace(/'/g, "\\'")}', ${material.quantity}, '${material.unit || ''}')">Изменить</button>
+                        <button class="action-btn edit-btn" onclick="editMaterial(${material.id}, '${escapeHtml(material.name)}', ${material.quantity}, '${escapeHtml(material.unit || '')}')">Изменить</button>
                         <button class="action-btn delete-btn" onclick="deleteMaterial(${material.id})">Удалить</button>
-                        <button class="action-btn transfer-btn" onclick="prepareTransfer(${material.id}, ${material.quantity})">Перенести</button>
+<button class="action-btn transfer-btn" onclick="prepareTransfer(${material.id}, ${material.quantity})">Перенести</button>
                     </td>
                 </tr>
             `).join('');
-document.getElementById('loading-materials').classList.add('hidden');
+            
+            document.getElementById('loading-materials').classList.add('hidden');
             document.getElementById('materials-table').classList.remove('hidden');
+        }
+        
+        // Экранирование HTML для безопасности
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe.toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
         
         // Переименовать лист
@@ -240,14 +254,14 @@ document.getElementById('loading-materials').classList.add('hidden');
             currentSheet = newName;
             document.getElementById('sheet-select').value = newName;
             document.getElementById('new-sheet-name').value = '';
-            loadSheets(); // Обновляем список листов
+            loadSheets();
         });
         
         // Сохранить/добавить материал
         document.getElementById('save-material').addEventListener('click', async () => {
-            const name = document.getElementById('material-name').value;
-            const quantity = document.getElementById('material-quantity').value;
-            const unit = document.getElementById('material-unit').value;
+            const name = document.getElementById('material-name').value.trim();
+            const quantity = document.getElementById('material-quantity').value.trim();
+            const unit = document.getElementById('material-unit').value.trim();
             
             if (!name || !quantity) {
                 alert('Заполните название и количество');
@@ -276,7 +290,7 @@ document.getElementById('loading-materials').classList.add('hidden');
                     sheetTitle: currentSheet,
                     name: name,
                     quantity: quantity,
-                    unit: unit
+                    unit: unit || 'шт.'
                 });
             }
             
@@ -286,37 +300,33 @@ document.getElementById('loading-materials').classList.add('hidden');
             }
             
             // Сбрасываем форму
-            document.getElementById('material-name').value = '';
-            document.getElementById('material-quantity').value = '';
-            document.getElementById('material-unit').value = 'шт.';
-            document.getElementById('save-material').textContent = 'Добавить материал';
-            document.getElementById('cancel-edit').classList.add('hidden');
-            currentMaterialId = null;
-            
-            // Обновляем список материалов
+            resetMaterialForm();
             loadMaterials(currentSheet);
         });
         
-        // Отмена редактирования
-        document.getElementById('cancel-edit').addEventListener('click', () => {
+        // Сброс формы материала
+        function resetMaterialForm() {
             document.getElementById('material-name').value = '';
             document.getElementById('material-quantity').value = '';
             document.getElementById('material-unit').value = 'шт.';
             document.getElementById('save-material').textContent = 'Добавить материал';
             document.getElementById('cancel-edit').classList.add('hidden');
             currentMaterialId = null;
-        });
+        }
+        
+        // Отмена редактирования
+        document.getElementById('cancel-edit').addEventListener('click', resetMaterialForm);
         
         // Подготовка к переносу материала
         window.prepareTransfer = function(materialId, maxQuantity) {
             currentMaterialId = materialId;
-            document.getElementById('transfer-quantity').value = '';
+document.getElementById('transfer-quantity').value = '';
             document.getElementById('transfer-quantity').max = maxQuantity;
             document.getElementById('transfer-section').classList.remove('hidden');
         };
         
         // Подтверждение переноса
-document.getElementById('confirm-transfer').addEventListener('click', async () => {
+        document.getElementById('confirm-transfer').addEventListener('click', async () => {
             const targetSheet = document.getElementById('target-sheet').value;
             const quantity = document.getElementById('transfer-quantity').value;
             
@@ -337,10 +347,7 @@ document.getElementById('confirm-transfer').addEventListener('click', async () =
                 return;
             }
             
-            // Скрываем форму переноса
             document.getElementById('transfer-section').classList.add('hidden');
-            
-            // Обновляем список материалов
             loadMaterials(currentSheet);
         });
         
@@ -354,7 +361,7 @@ document.getElementById('confirm-transfer').addEventListener('click', async () =
             currentMaterialId = id;
             document.getElementById('material-name').value = name;
             document.getElementById('material-quantity').value = quantity;
-            document.getElementById('material-unit').value = unit;
+            document.getElementById('material-unit').value = unit || 'шт.';
             document.getElementById('save-material').textContent = 'Обновить материал';
             document.getElementById('cancel-edit').classList.remove('hidden');
         };
